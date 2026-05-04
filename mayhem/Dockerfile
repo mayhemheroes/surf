@@ -1,11 +1,13 @@
 FROM golang:1.24 as builder
 
+ENV GOTOOLCHAIN=go1.25.0
+
 COPY . /teacup
 WORKDIR /teacup/mayhem
 
-RUN GOTOOLCHAIN=auto go install github.com/dvyukov/go-fuzz/go-fuzz@latest github.com/dvyukov/go-fuzz/go-fuzz-build@latest
-RUN GOTOOLCHAIN=auto go get github.com/dvyukov/go-fuzz/go-fuzz-dep
-RUN GOTOOLCHAIN=auto go get github.com/AdaLogics/go-fuzz-headers
+RUN go install github.com/dvyukov/go-fuzz/go-fuzz@latest github.com/dvyukov/go-fuzz/go-fuzz-build@latest
+RUN go get github.com/dvyukov/go-fuzz/go-fuzz-dep
+RUN go get github.com/AdaLogics/go-fuzz-headers
 RUN apt update && apt install -y clang
 
 RUN cd fuzz_surf_awsu && go-fuzz-build -libfuzzer -o fuzz_surf_awsu.a && \
